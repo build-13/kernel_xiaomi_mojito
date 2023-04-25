@@ -1398,12 +1398,19 @@ int __init f2fs_init_sysfs(void)
 
 	ret = kobject_init_and_add(&f2fs_feat, &f2fs_feat_ktype,
 				   NULL, "features");
-	if (ret) {
-		kobject_put(&f2fs_feat);
-		kset_unregister(&f2fs_kset);
-	} else {
-		f2fs_proc_root = proc_mkdir("fs/f2fs", NULL);
+	if (ret)
+		goto put_kobject;
+
+	f2fs_proc_root = proc_mkdir("fs/f2fs", NULL);
+	if (!f2fs_proc_root) {
+		ret = -ENOMEM;
+		goto put_kobject;
 	}
+
+	return 0;
+put_kobject:
+	kobject_put(&f2fs_feat);
+	kset_unregister(&f2fs_kset);
 	return ret;
 }
 
@@ -1442,8 +1449,11 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
 	if (err)
 		goto put_feature_list_kobj;
 
-	if (f2fs_proc_root)
-		sbi->s_proc = proc_mkdir(sb->s_id, f2fs_proc_root);
+	sbi->s_proc = proc_mkdir(sb->s_id, f2fs_proc_root);
+	if (!sbi->s_proc) {
+		err = -ENOMEM;
+		goto put_feature_list_kobj;
+	}
 
 	if (sbi->s_proc) {
 		proc_create_data("segment_info", 0444, sbi->s_proc,
@@ -1474,8 +1484,7 @@ put_sb_kobj:
 
 void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi)
 {
-	if (sbi->s_proc)
-		remove_proc_subtree(sbi->sb->s_id, f2fs_proc_root);
+	remove_proc_subtree(sbi->sb->s_id, f2fs_proc_root);
 
 	kobject_put(&sbi->s_stat_kobj);
 	wait_for_completion(&sbi->s_stat_kobj_unregister);
