@@ -35,19 +35,17 @@
 static int f2fs_filemap_fault(struct vm_fault *vmf)
 {
 	struct inode *inode = file_inode(vmf->vma->vm_file);
-	int err;
+	vm_fault_t ret;
 
-	f2fs_down_read(&F2FS_I(inode)->i_mmap_sem);
-	err = filemap_fault(vmf);
-	f2fs_up_read(&F2FS_I(inode)->i_mmap_sem);
+	ret = filemap_fault(vmf);
 
-	if (!err)
+	if (ret & VM_FAULT_LOCKED)
 		f2fs_update_iostat(F2FS_I_SB(inode), APP_MAPPED_READ_IO,
 							F2FS_BLKSIZE);
 	
 	trace_f2fs_filemap_fault(inode, vmf->pgoff, vmf->vma->vm_flags, ret);
 
-	return err;
+	return ret;
 }
 
 static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
