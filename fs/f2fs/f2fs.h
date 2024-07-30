@@ -1426,6 +1426,7 @@ enum compress_algorithm_type {
 	COMPRESS_LZO,
 	COMPRESS_LZ4,
 	COMPRESS_ZSTD,
+  COMPRESS_LZORLE,
 	COMPRESS_MAX,
 };
 
@@ -1762,6 +1763,8 @@ struct f2fs_sb_info {
 	/* For reclaimed segs statistics per each GC mode */
 	unsigned int gc_segment_mode;		/* GC state for reclaimed segments */
 	unsigned int gc_reclaimed_segs[MAX_GC_MODE];	/* Reclaimed segs for each mode */
+
+  unsigned long seq_file_ra_mul;		/* multiplier for ra_pages of seq. files in fadvise */
 
 	int max_fragment_chunk;			/* max chunk size for block fragmentation mode */
 	int max_fragment_hole;			/* max hole size for block fragmentation mode */

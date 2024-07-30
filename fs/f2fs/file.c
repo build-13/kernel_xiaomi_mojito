@@ -3440,7 +3440,7 @@ static int f2fs_ioc_read_verity_metadata(struct file *filp, unsigned long arg)
 	return fsverity_ioctl_read_metadata(filp, (const void __user *)arg);
 }
 
-static int f2fs_get_compress_blocks(struct file *filp, unsigned long arg)
+static int f2fs_get_compress_blocks(struct inode *inode, __u64 *blocks)
 {
 	if (!f2fs_sb_has_compression(F2FS_I_SB(inode)))
 		return -EOPNOTSUPP;
