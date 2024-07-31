@@ -486,18 +486,8 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
 		err = PTR_ERR(page);
 		goto out;
 	} else {
-		err = f2fs_do_add_link(dir, &dot, NULL, dir->i_ino, S_IFDIR);
-		if (err)
-			goto out;
+		err = f2fs_do_add_link(dir, &dot, NULL, pino, S_IFDIR);
 	}
-
-	de = f2fs_find_entry(dir, &dotdot_name, &page);
-	if (de)
-		f2fs_put_page(page, 0);
-	else if (IS_ERR(page))
-		err = PTR_ERR(page);
-	else
-		err = f2fs_do_add_link(dir, &dotdot_name, NULL, pino, S_IFDIR);
 out:
 	if (!err)
 		clear_inode_flag(dir, FI_INLINE_DOTS);
