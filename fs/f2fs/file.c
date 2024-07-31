@@ -35,7 +35,7 @@
 static int f2fs_filemap_fault(struct vm_fault *vmf)
 {
 	struct inode *inode = file_inode(vmf->vma->vm_file);
-	vm_fault_t ret;
+	int ret;
 
 	ret = filemap_fault(vmf);
 
@@ -56,7 +56,7 @@ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
 	struct dnode_of_data dn;
 	bool need_alloc = true;
 	int err = 0;
-	vm_fault_t ret;
+	int ret;
 
 	if (unlikely(IS_IMMUTABLE(inode)))
 		return VM_FAULT_SIGBUS;

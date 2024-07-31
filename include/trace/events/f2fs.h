@@ -1416,7 +1416,7 @@ TRACE_EVENT(f2fs_replace_atomic_write_block,
 DECLARE_EVENT_CLASS(f2fs_mmap,
 
 	TP_PROTO(struct inode *inode, pgoff_t index,
-			vm_flags_t flags, vm_fault_t ret),
+			vm_flags_t flags, int ret),
 
 	TP_ARGS(inode, index, flags, ret),
 
@@ -1425,7 +1425,7 @@ DECLARE_EVENT_CLASS(f2fs_mmap,
 		__field(ino_t,	ino)
 		__field(pgoff_t, index)
 		__field(vm_flags_t, flags)
-		__field(vm_fault_t, ret)
+		__field(int, ret)
 	),
 
 	TP_fast_assign(
@@ -1446,7 +1446,7 @@ DECLARE_EVENT_CLASS(f2fs_mmap,
 DEFINE_EVENT(f2fs_mmap, f2fs_filemap_fault,
 
 	TP_PROTO(struct inode *inode, pgoff_t index,
-			vm_flags_t flags, vm_fault_t ret),
+			vm_flags_t flags, int ret),
 
 	TP_ARGS(inode, index, flags, ret)
 );
@@ -1454,7 +1454,7 @@ DEFINE_EVENT(f2fs_mmap, f2fs_filemap_fault,
 DEFINE_EVENT(f2fs_mmap, f2fs_vm_page_mkwrite,
 
 	TP_PROTO(struct inode *inode, pgoff_t index,
-			vm_flags_t flags, vm_fault_t ret),
+			vm_flags_t flags, int ret),
 
 	TP_ARGS(inode, index, flags, ret)
 );
